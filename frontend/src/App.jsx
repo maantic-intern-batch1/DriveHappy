@@ -1,7 +1,7 @@
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import AnalysisReview from "./pages/AnalysisReview";
-import ImageUpload from "./pages/ImageUpload";
+import AddImages from "./pages/AddImages";
 import {
   createBrowserRouter,
   RouterProvider
@@ -17,8 +17,8 @@ export default function App() {
           element: <HomePage />
         },
         {
-          path: 'uploadCar',
-          element: <ImageUpload />
+          path: 'addImages',
+          element: <AddImages />
         },
         {
           path: 'analysisReview',

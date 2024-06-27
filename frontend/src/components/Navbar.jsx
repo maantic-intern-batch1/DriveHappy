@@ -12,7 +12,7 @@ export default function Navbar() {
                         <div className="hidden tablet:block">
                             <ul className="flex flex-row gap-x-2 font-bold text-gray-500 text-sm laptop:gap-x-8 laptop:text-base">
                                 <li className="cursor-pointer hover:text-[#0473E9]"><NavLink to="/" className={({ isActive }) => isActive ? "text-[#193950]" : undefined} end>Home</NavLink></li>
-                                <li className="cursor-pointer hover:text-[#0473E9]" ><NavLink to="/uploadCar" className={({ isActive }) => isActive ? "text-[#193950]" : undefined} end>Upload Car</NavLink></li>
+                                <li className="cursor-pointer hover:text-[#0473E9]" ><NavLink to="/addImages" className={({ isActive }) => isActive ? "text-[#193950]" : undefined} end>Add Car Images</NavLink></li>
                                 <li className="cursor-pointer hover:text-[#0473E9]"><NavLink to="/analysisReview" className={({ isActive }) => isActive ? "text-[#193950]" : undefined} end>Analyze Review</NavLink></li>
                                 <li className="cursor-pointer hover:text-[#0473E9]">About Us</li>
                             </ul>

@@ -109,7 +109,7 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
-            <CarList />
+            <CarList reviewer={false} />
         </>
     )
 }
