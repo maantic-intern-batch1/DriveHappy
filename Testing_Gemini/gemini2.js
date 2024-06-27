@@ -44,19 +44,36 @@ async function run() {
 
     // const prompt = "";
 
+    // const imageParts = [
+    //     fileToGenerativePart("m1.webp", "image/webp"),
+    //     fileToGenerativePart("m2.webp", "image/webp"),
+    //     fileToGenerativePart("m3.webp", "image/webp"),
+    //     fileToGenerativePart("m4.webp", "image/webp"),
+    //     fileToGenerativePart("m5.webp", "image/webp"),
+    //     fileToGenerativePart("m6.webp", "image/webp"),
+    //     fileToGenerativePart("m7.webp", "image/webp"),
+    //     fileToGenerativePart("m8.webp", "image/webp"),
+    //     fileToGenerativePart("m9.webp", "image/webp"),
+    //     fileToGenerativePart("m10.webp", "image/webp"),
+    // ];
     const imageParts = [
-        fileToGenerativePart("m1.webp", "image/webp"),
-        fileToGenerativePart("m2.webp", "image/webp"),
-        fileToGenerativePart("m3.webp", "image/webp"),
-        fileToGenerativePart("m4.webp", "image/webp"),
-        fileToGenerativePart("m5.webp", "image/webp"),
-        fileToGenerativePart("m6.webp", "image/webp"),
-        fileToGenerativePart("m7.webp", "image/webp"),
-        fileToGenerativePart("m8.webp", "image/webp"),
-        fileToGenerativePart("m9.webp", "image/webp"),
-        fileToGenerativePart("m10.webp", "image/webp"),
+        fileToGenerativePart("nexon1.webp", "image/webp"),
+        fileToGenerativePart("nexon2.webp", "image/webp"),
+        fileToGenerativePart("nexon3.webp", "image/webp"),
+        fileToGenerativePart("nexon4.webp", "image/webp"),
+        fileToGenerativePart("nexon5.webp", "image/webp"),
+        fileToGenerativePart("nexon6.webp", "image/webp"),
+        fileToGenerativePart("nexon7.webp", "image/webp"),
+        fileToGenerativePart("nexon8.webp", "image/webp"),
+        fileToGenerativePart("nexon9.webp", "image/webp"),
+        fileToGenerativePart("nexon10.webp", "image/webp"),
+        fileToGenerativePart("nexon11.webp", "image/webp"),
+        fileToGenerativePart("nexon12.webp", "image/webp"),
+        fileToGenerativePart("nexon13.webp", "image/webp"),
+        fileToGenerativePart("nexon14.webp", "image/webp"),
+        fileToGenerativePart("nexon15.webp", "image/webp"),
+        fileToGenerativePart("nexon16.webp", "image/webp"),
     ];
-
     const result = await model.generateContent([prompt, ...imageParts]);
     const response = await result.response;
     const text = response.text();

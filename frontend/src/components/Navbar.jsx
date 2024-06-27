@@ -6,9 +6,9 @@ export default function Navbar() {
     return (
         <>
             <nav className={`py-4 border-b-2  border-gray-200/70  w-full bg-white `}>
-                <div className="flex flex-row items-center justify-between font-inter w-full">
+                <div className="flex flex-row items-center justify-between font-poppins w-full">
                     <div className="flex flex-row justify-between laptop:gap-x-8 w-full pr-20 pl-20">
-                        <div className="font-title text-[#193950] font-bold text-xl">DriveHappy</div>
+                        <div className=" text-[#193950] font-bold text-xl">DriveHappy</div>
                         <div className="hidden tablet:block">
                             <ul className="flex flex-row gap-x-2 font-bold text-gray-500 text-sm laptop:gap-x-8 laptop:text-base">
                                 <li className="cursor-pointer hover:text-[#0473E9]"><NavLink to="/" className={({ isActive }) => isActive ? "text-[#193950]" : undefined} end>Home</NavLink></li>
