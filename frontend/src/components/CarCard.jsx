@@ -1,9 +1,14 @@
+import { useNavigate } from "react-router-dom"
 export default function CarCard({ car }) {
+    const navigate = useNavigate();
+    function handleClick() {
+        navigate("/analysisReview", { state: { car } });
+    }
     return (
         <>
             <div className="border border-slate-200 rounded-xl p-4 shadow">
                 <div className="">
-                    <img src={car.url} alt={car.make} />
+                    <img src={car.url1} alt={car.make} />
                 </div>
                 <div>
                     <div className="flex flex-row justify-between mt-4">
@@ -16,7 +21,7 @@ export default function CarCard({ car }) {
                     </div>
                 </div>
                 <div>
-                    <button className="bg-[#193950] text-white w-full mt-4 py-2 rounded hover:bg-[#2F4C61]">View Details</button>
+                    <button onClick={handleClick} className="bg-[#193950] text-white w-full mt-4 py-2 rounded hover:bg-[#2F4C61]">View Details</button>
                 </div>
             </div>
         </>

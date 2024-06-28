@@ -40,17 +40,17 @@ export default function HomePage() {
                                     {drop1 && <div className="bg-slate-50 text-black">
                                         <div>
                                             <input type="radio" id="any" name="make" value="any" />
-                                            <label for="any">Any</label>
+                                            <label htmlFor="any">Any</label>
                                         </div>
 
                                         <div>
                                             <input type="radio" id="tata" name="make" value="Tata" />
-                                            <label for="tata">Tata</label>
+                                            <label htmlFor="tata">Tata</label>
                                         </div>
 
                                         <div>
                                             <input type="radio" id="mahindra" name="make" value="Mahindra" />
-                                            <label for="mahindra">Mahindra</label>
+                                            <label htmlFor="mahindra">Mahindra</label>
                                         </div>
                                     </div>}
                                 </fieldset>
@@ -59,21 +59,21 @@ export default function HomePage() {
                                     {drop2 && <div className="bg-slate-50 text-black">
                                         <div>
                                             <input type="radio" id="anyFuel" name="fuel" value="anyFuel" />
-                                            <label for="anyFuel">Any</label>
+                                            <label htmlFor="anyFuel">Any</label>
                                         </div>
 
                                         <div>
                                             <input type="radio" id="petrol" name="fuel" value="Petrol" />
-                                            <label for="petrol">Petrol</label>
+                                            <label htmlFor="petrol">Petrol</label>
                                         </div>
 
                                         <div>
                                             <input type="radio" id="diesel" name="fuel" value="Diesel" />
-                                            <label for="diesel">Diesel</label>
+                                            <label htmlFor="diesel">Diesel</label>
                                         </div>
                                         <div>
                                             <input type="radio" id="electric" name="fuel" value="Electric" />
-                                            <label for="electric">Electric</label>
+                                            <label htmlFor="electric">Electric</label>
                                         </div>
                                     </div>}
                                 </fieldset>
@@ -81,26 +81,26 @@ export default function HomePage() {
                                     <legend className="bg-slate-50 text-black px-4 cursor-pointer hover:bg-[#bdd1e0] select-none" onClick={() => handleDrop(3)}>Select Price Range {drop3 == false ? <FontAwesomeIcon icon={faCaretDown} /> : <FontAwesomeIcon icon={faCaretUp} />}</legend>
                                     {drop3 && <div className="bg-slate-50 text-black">
                                         <div>
-                                            <input type="radio" id="price1" name="make" value="price1" />
-                                            <label for="price1">Any</label>
+                                            <input type="radio" id="price1" name="price" value="price1" />
+                                            <label htmlFor="price1">Any</label>
                                         </div>
 
                                         <div>
-                                            <input type="radio" id="price2" name="make" value="price2" />
-                                            <label for="price2"> ₹ 1Lakhs - ₹ 4Lakhs</label>
+                                            <input type="radio" id="price2" name="price" value="price2" />
+                                            <label htmlFor="price2"> ₹ 1Lakhs - ₹ 4Lakhs</label>
                                         </div>
 
                                         <div>
-                                            <input type="radio" id="price3" name="make" value="price3" />
-                                            <label for="price3"> ₹ 4lakhs - ₹ 8Lakhs</label>
+                                            <input type="radio" id="price3" name="price" value="price3" />
+                                            <label htmlFor="price3"> ₹ 4lakhs - ₹ 8Lakhs</label>
                                         </div>
                                         <div>
-                                            <input type="radio" id="price4" name="make" value="price4" />
-                                            <label for="price4"> ₹ 8laks - ₹ 15Lakhs</label>
+                                            <input type="radio" id="price4" name="price" value="price4" />
+                                            <label htmlFor="price4"> ₹ 8laks - ₹ 15Lakhs</label>
                                         </div>
                                         <div>
-                                            <input type="radio" id="price5" name="make" value="price5" />
-                                            <label for="price5"> Above ₹ 15Lakhs</label>
+                                            <input type="radio" id="price5" name="price" value="price5" />
+                                            <label htmlFor="price5"> Above ₹ 15Lakhs</label>
                                         </div>
                                     </div>}
                                 </fieldset>

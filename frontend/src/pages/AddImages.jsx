@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import CarList from '../components/CarList';
-import { NavLink } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 export default function AddImages() {
     const [fileInputs, setFileInputs] = useState([{ id: 1 }]);
-
+    const navigate = useNavigate();
     const addFileInput = () => {
         setFileInputs([...fileInputs, { id: fileInputs.length + 1 }]);
     };
@@ -12,7 +11,11 @@ export default function AddImages() {
     const removeFileInput = (id) => {
         setFileInputs(fileInputs.filter(input => input.id !== id));
     };
-
+    function handleSubmit() {
+        // handling on submit logic 
+        alert("Are you sure you want to submit ? ")
+        navigate("/analysisReview");
+    }
     return (
         <>
             <div className="mt-12 px-24">
@@ -39,13 +42,22 @@ export default function AddImages() {
                             </div>
                         ))}
                     </form>
-                    <button
-                        type="button"
-                        onClick={addFileInput}
-                        className="mt-4 px-4 py-2 bg-[#193950] text-white rounded-lg hover:bg-[#2F4C61] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                    >
-                        Add More Images
-                    </button>
+                    <div className="flex flex-start gap-x-4">
+                        <button
+                            type="button"
+                            onClick={addFileInput}
+                            className="mt-4 px-4 py-2 bg-[#193950] text-white rounded-lg hover:bg-[#2F4C61] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        >
+                            Add More Images
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleSubmit}
+                            className="mt-4 px-4 py-2 bg-[#193950] text-white rounded-lg hover:bg-[#2F4C61] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                        >
+                            Submit for Analysis
+                        </button>
+                    </div>
                 </div>
             </div>
         </>
