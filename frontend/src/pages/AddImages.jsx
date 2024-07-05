@@ -26,27 +26,50 @@ export default function AddImages() {
     const handleSubmit = async () => {
         if (!window.confirm("Are you sure you want to submit?")) return;
 
+        // try {
+        //     const uploadPromises = fileInputs.map(async input => {
+        //         const response = await axios.get('http://localhost:3000/s3URL');
+        //         const { url } = response.data;
+
+        //         await axios.put(url, input.file, {
+        //             headers: {
+        //                 'Content-Type': input.file.type
+        //             }
+        //         });
+
+        //         return url.split('?')[0];
+        //     });
+
+        //     const uploadedUrls = await Promise.all(uploadPromises);
+
+        //     await axios.post('http://localhost:3000/upload', {
+        //         imageUrls: uploadedUrls
+        //     });
+
+        //     navigate('/analysisReview');
+        // } catch (error) {
+        //     console.error('Error uploading images:', error);
+        //     alert('There was an error uploading your images. Please try again.');
+        // }
         try {
-            const uploadPromises = fileInputs.map(async input => {
-                const response = await axios.get('http://localhost:3000/s3URL');
-                const { url } = response.data;
-
-                await axios.put(url, input.file, {
-                    headers: {
-                        'Content-Type': input.file.type
-                    }
-                });
-
-                return url.split('?')[0];
+            const formData = new FormData();
+            fileInputs.forEach(input => {
+                formData.append('images', input.file);
             });
 
-            const uploadedUrls = await Promise.all(uploadPromises);
-
-            await axios.post('http://localhost:3000/upload', {
-                imageUrls: uploadedUrls
+            // Send the images to the backend
+            const response = await fetch('http://localhost:3000/upload-images', {
+                method: 'POST',
+                body: formData,
             });
 
-            navigate('/analysisReview');
+            const data = await response.json();
+
+            if (data.success) {
+                // navigate('/analysisReview');
+            } else {
+                alert('There was an error uploading your images. Please try again.');
+            }
         } catch (error) {
             console.error('Error uploading images:', error);
             alert('There was an error uploading your images. Please try again.');

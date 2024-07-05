@@ -18,7 +18,6 @@ const createImperfectionTable = async () => {
     imperfection_description VARCHAR(255)
     );
   `;
-
     try {
         // Create the url table
         await pool.query(query);

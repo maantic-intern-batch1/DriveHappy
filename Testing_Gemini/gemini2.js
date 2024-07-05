@@ -39,23 +39,9 @@ function fileToGenerativePart(path, mimeType) {
 async function run() {
     // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
     const model = genAI.getGenerativeModel(
-        { model: "gemini-1.5-pro" }
+        { model: "gemini-1.5-pro", generationConfig: { response_mime_type: "application/json" } }
     );
 
-    // const prompt = "";
-
-    // const imageParts = [
-    //     fileToGenerativePart("m1.webp", "image/webp"),
-    //     fileToGenerativePart("m2.webp", "image/webp"),
-    //     fileToGenerativePart("m3.webp", "image/webp"),
-    //     fileToGenerativePart("m4.webp", "image/webp"),
-    //     fileToGenerativePart("m5.webp", "image/webp"),
-    //     fileToGenerativePart("m6.webp", "image/webp"),
-    //     fileToGenerativePart("m7.webp", "image/webp"),
-    //     fileToGenerativePart("m8.webp", "image/webp"),
-    //     fileToGenerativePart("m9.webp", "image/webp"),
-    //     fileToGenerativePart("m10.webp", "image/webp"),
-    // ];
     const imageParts = [
         fileToGenerativePart("nexon1.webp", "image/webp"),
         fileToGenerativePart("nexon2.webp", "image/webp"),
@@ -74,10 +60,13 @@ async function run() {
         fileToGenerativePart("nexon15.webp", "image/webp"),
         fileToGenerativePart("nexon16.webp", "image/webp"),
     ];
+    // console.log(imageParts);
     const result = await model.generateContent([prompt, ...imageParts]);
     const response = await result.response;
+    // console.log(response);
     const text = response.text();
-    console.log(text);
+    // console.log(text);
+    console.log(JSON.parse(text));
 }
 
 run();
