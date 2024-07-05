@@ -13,7 +13,17 @@ const multer = require('multer');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require("fs");
 const prompt = fs.readFileSync('car_analysis_prompt.txt', 'utf8');
-// Access your API key as an environment variable (see "Set up your API key" above)
+const { Pool } = require('pg');
+let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, PGPORT } = process.env;
+const pool = new Pool({
+    host: PGHOST,
+    database: PGDATABASE,
+    user: PGUSER,
+    password: PGPASSWORD,
+    port: PGPORT,
+    ssl: false // Disable SSL
+});
+
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 // AWS S3 credentials
 let { ACCESS_KEYID, SECRET_ACCESS_KEY, REGION, BUCKET_NAME } = process.env
@@ -49,11 +59,7 @@ const sendImagesToGemini = async (files) => {
     const imageParts = files.map(file => bufferToGenerativePart(file.buffer, file.mimetype));
     const result = await model.generateContent([prompt, ...imageParts]);
     const response = await result.response;
-    // const json = await response.json();
-    // return json;
-    // console.log(prompt);
     const text = await response.text();
-    // console.log(text);
     const json = await JSON.parse(text); // Adjust according to the actual response format
     return json
 };
@@ -67,38 +73,109 @@ const s3Client = new S3Client(
         }
     }
 );
-async function generateUploadURL() // provides the url for the image (for putting)
-{
+
+async function uploadImageToS3(file, folderName) {
     const rawBytes = await randomBytes(16); // generates 16 random bytes
     const imageName = rawBytes.toString('hex'); // converting the bytes into hexadecimal
+    const key = `/used-car-images/${imageName}`; // Constructing the key with the desired folder structure
     const command = new PutObjectCommand({
         Bucket: BUCKET_NAME,
-        Key: imageName,
-        // Expires: 60,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype
     });
-    const url = await getSignedUrl(s3Client, command);
-    return url;
-    // return null;
+    await s3Client.send(command);
+    return key; // Return the key of the uploaded image
 }
+const parseNumeric = (value) => {
+    const parsedValue = parseFloat(value);
+    return isNaN(parsedValue) ? null : parsedValue;
+};
+const storeCarDetails = async (carDetails, imageUrls) => {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
 
-// app.get('/s3URL', async (req, res) => {
-//     const url = await generateUploadURL();
-//     res.json({ ['url']: url });
-// });
+        const carResult = await client.query(
+            `INSERT INTO car (Make, Model, Year, Price, Distance, CarCondition, Repainted_Parts, Perfect_Parts, Repair_cost)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING Car_id`,
+            [
+                carDetails.OtherDetails.MakeName,
+                carDetails.OtherDetails.ModelName,
+                parseNumeric(carDetails.OtherDetails.Year),
+                parseNumeric(carDetails.OtherDetails.PriceEstimate),
+                parseNumeric(carDetails.OtherDetails.DistanceTravelled),
+                carDetails.OtherDetails.CarCondition,
+                carDetails.OtherDetails.RepaintedParts,
+                carDetails.OtherDetails.PerfectParts,
+                parseNumeric(carDetails.OtherDetails.ApproximateCostOfRepair),
+            ]
+        );
+
+        const carId = carResult.rows[0].car_id;
+
+        for (const [location, description] of Object.entries(carDetails.Imperfections)) {
+            await client.query(
+                `INSERT INTO imperfection (car_id, imperfection_location, imperfection_description)
+         VALUES ($1, $2, $3)`,
+                [carId, location, description]
+            );
+        }
+
+        await client.query(
+            `INSERT INTO tyre (car_id, left_front, left_rear, right_front, right_rear)
+       VALUES ($1, $2, $3, $4, $5)`,
+            [
+                carId,
+                parseNumeric(carDetails.TyreDetails.LeftFrontTyreLifeRemaining),
+                parseNumeric(carDetails.TyreDetails.LeftRearTyreLifeRemaining),
+                parseNumeric(carDetails.TyreDetails.RightFrontTyreLifeRemaining),
+                parseNumeric(carDetails.TyreDetails.RightRearTyreLifeRemaining),
+            ]
+        );
+
+        for (const url of imageUrls) {
+            await client.query(
+                `INSERT INTO url (car_id, image_url)
+         VALUES ($1, $2)`,
+                [carId, url]
+            );
+        }
+
+        await client.query('COMMIT');
+        return carId;
+    } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+    } finally {
+        client.release();
+    }
+};
 
 app.post("/upload-images", upload.array('images'), async (req, res) => {
     try {
         const files = req.files;
         const carDetails = await sendImagesToGemini(files);
-        console.log("post : ", carDetails);
-        const carId = 1;
-        res.status(200).json({ success: true, carId });
-    }
-    catch (error) {
-        console.error(error);
+
+        const folderName = 'internb1'; // Folder name where images will be uploaded
+        const uploadPromises = files.map(file => uploadImageToS3(file, folderName));
+        const uploadedKeys = await Promise.all(uploadPromises);
+
+        const baseUrl = `https://${BUCKET_NAME}.s3.${REGION}.amazonaws.com/`;
+        const fullUrls = uploadedKeys.map(key => `${baseUrl}${key}`);
+
+        const carId = await storeCarDetails(carDetails, fullUrls);
+
+
+        console.log('Car Details:', carDetails);
+        console.log('Uploaded Keys:', fullUrls);
+
+        res.status(200).json({ success: true, carId, fullUrls });
+    } catch (error) {
+        console.error('Error uploading images:', error);
         res.status(500).json({ success: false, error: 'An error occurred' });
     }
-})
+});
 
 app.get("/", (req, res) => {
     res.send("Hello World")

@@ -5,11 +5,11 @@
 const { createCarTable } = require('./models/car.js');
 const { createUrlTable } = require('./models/url.js');
 const { createImperfectionTable } = require('./models/imperfection.js');
-
+const { createTyreTable } = require('./models/tyre.js');
 const runQuery = async () => {
     // create{Tablename}Table is the format 
     // change the below line
-    // await createImperfectionTable();
+    await createTyreTable();
 };
 
 runQuery()
