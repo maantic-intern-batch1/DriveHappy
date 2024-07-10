@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import CarList from '../components/CarList';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 export default function AddImages() {
     const [fileInputs, setFileInputs] = useState([{ id: 1, file: null }]);
@@ -25,32 +24,6 @@ export default function AddImages() {
 
     const handleSubmit = async () => {
         if (!window.confirm("Are you sure you want to submit?")) return;
-
-        // try {
-        //     const uploadPromises = fileInputs.map(async input => {
-        //         const response = await axios.get('http://localhost:3000/s3URL');
-        //         const { url } = response.data;
-
-        //         await axios.put(url, input.file, {
-        //             headers: {
-        //                 'Content-Type': input.file.type
-        //             }
-        //         });
-
-        //         return url.split('?')[0];
-        //     });
-
-        //     const uploadedUrls = await Promise.all(uploadPromises);
-
-        //     await axios.post('http://localhost:3000/upload', {
-        //         imageUrls: uploadedUrls
-        //     });
-
-        //     navigate('/analysisReview');
-        // } catch (error) {
-        //     console.error('Error uploading images:', error);
-        //     alert('There was an error uploading your images. Please try again.');
-        // }
         try {
             const formData = new FormData();
             fileInputs.forEach(input => {

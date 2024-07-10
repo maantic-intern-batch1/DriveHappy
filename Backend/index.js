@@ -7,8 +7,7 @@ const crypto = require('crypto');
 const promisify = require('util').promisify;
 const randomBytes = promisify(crypto.randomBytes);
 const PORT = process.env.PORT || 3000
-const { S3Client, GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const multer = require('multer');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require("fs");
@@ -35,6 +34,9 @@ const corsOptions = {
     allowedHeaders: 'Content-Type,Authorization',
     exposedHeaders: 'Content-Range,X-Content- Range'
 };
+
+// connecting the routers 
+const fetchData = require("./routes/dataFetch");
 // app.use(multer().array)
 app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: '50mb' }))
@@ -74,7 +76,7 @@ const s3Client = new S3Client(
     }
 );
 
-async function uploadImageToS3(file, folderName) {
+async function uploadImageToS3(file) {
     const rawBytes = await randomBytes(16); // generates 16 random bytes
     const imageName = rawBytes.toString('hex'); // converting the bytes into hexadecimal
     const key = `/used-car-images/${imageName}`; // Constructing the key with the desired folder structure
@@ -98,7 +100,7 @@ const storeCarDetails = async (carDetails, imageUrls) => {
 
         const carResult = await client.query(
             `INSERT INTO car (Make, Model, Year, Price, Distance, CarCondition, Repainted_Parts, Perfect_Parts, Repair_cost)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING Car_id`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING Car_id`,
             [
                 carDetails.OtherDetails.MakeName,
                 carDetails.OtherDetails.ModelName,
@@ -124,7 +126,7 @@ const storeCarDetails = async (carDetails, imageUrls) => {
 
         await client.query(
             `INSERT INTO tyre (car_id, left_front, left_rear, right_front, right_rear)
-       VALUES ($1, $2, $3, $4, $5)`,
+            VALUES ($1, $2, $3, $4, $5)`,
             [
                 carId,
                 parseNumeric(carDetails.TyreDetails.LeftFrontTyreLifeRemaining),
@@ -151,21 +153,21 @@ const storeCarDetails = async (carDetails, imageUrls) => {
         client.release();
     }
 };
+app.use("/fetchData", fetchData);
 
 app.post("/upload-images", upload.array('images'), async (req, res) => {
     try {
         const files = req.files;
         const carDetails = await sendImagesToGemini(files);
 
-        const folderName = 'internb1'; // Folder name where images will be uploaded
-        const uploadPromises = files.map(file => uploadImageToS3(file, folderName));
+        const folderName = 'internb1';
+        const uploadPromises = files.map(file => uploadImageToS3(file));
         const uploadedKeys = await Promise.all(uploadPromises);
 
         const baseUrl = `https://${BUCKET_NAME}.s3.${REGION}.amazonaws.com/`;
         const fullUrls = uploadedKeys.map(key => `${baseUrl}${key}`);
 
         const carId = await storeCarDetails(carDetails, fullUrls);
-
 
         console.log('Car Details:', carDetails);
         console.log('Uploaded Keys:', fullUrls);
