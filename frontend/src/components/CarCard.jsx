@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 export default function CarCard({ car }) {
     const navigate = useNavigate();
     function handleClick() {
-        navigate("/analysisReview", { state: { car } });
+        navigate("/analysisReview", { state: { id: car.car_id, review: false } });
     }
     return (
         <>
