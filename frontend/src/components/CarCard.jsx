@@ -7,8 +7,8 @@ export default function CarCard({ car }) {
     return (
         <>
             <div className="border border-slate-200 rounded-xl p-4 shadow">
-                <div className="">
-                    <img src={car.image_urls[0]} alt={car.make} />
+                <div className="h-72">
+                    <img src={car.image_urls[0]} alt={car.make} className="h-72" />
                 </div>
                 <div>
                     <div className="flex flex-row justify-between mt-4">

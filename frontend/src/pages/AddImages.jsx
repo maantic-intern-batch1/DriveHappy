@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import CarList from '../components/CarList';
 import { useNavigate } from 'react-router-dom';
-
+import Loader from '../components/Loading';
 export default function AddImages() {
+    const [loading, setLoading] = useState(false);
     const [fileInputs, setFileInputs] = useState([{ id: 1, file: null }]);
     const navigate = useNavigate();
     const addFileInput = () => {
@@ -25,6 +26,7 @@ export default function AddImages() {
     const handleSubmit = async () => {
         if (!window.confirm("Are you sure you want to submit?")) return;
         try {
+            setLoading(true);
             const formData = new FormData();
             fileInputs.forEach(input => {
                 formData.append('images', input.file);
@@ -39,7 +41,8 @@ export default function AddImages() {
             const data = await response.json();
 
             if (data.success) {
-                // navigate('/analysisReview');
+                setLoading(false);
+                navigate("/analysisReview", { state: { id: data.carId, review: true } });
             } else {
                 alert('There was an error uploading your images. Please try again.');
             }

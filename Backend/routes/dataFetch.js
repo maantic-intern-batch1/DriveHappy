@@ -9,7 +9,8 @@ const pool = new Pool({
     database: PGDATABASE,
     user: PGUSER,
     password: PGPASSWORD,
-    port: PGPORT
+    port: PGPORT,
+    // ssl: false // Disable SSL
 });
 
 // This is the route /fetchData :
@@ -40,26 +41,34 @@ router.get("/", async (req, res) => {
 // For retreving full car details of a specific car with id - returns car,url,tyre,imperfection details
 router.route("/:id").get(async (req, res) => {
     const query = `
-            SELECT 
-                c.*, 
-                array_agg(DISTINCT u.image_url) AS image_urls,
-                json_build_object(
-                    'left_front', t.left_front, 
-                    'left_rear', t.left_rear,
-                    'right_front', t.right_front,
-                    'right_rear', t.right_rear
-                ) AS tyre_details,
-                json_agg(json_build_object(
-                    'location', i.imperfection_location, 
-                    'description', i.imperfection_description
-                )) AS imperfections
-            FROM car c
-            LEFT JOIN url u ON c.car_id = u.car_id
-            LEFT JOIN tyre t ON c.car_id = t.car_id
-            LEFT JOIN imperfection i ON c.car_id = i.car_id
-            WHERE c.car_id = $1
-            GROUP BY c.car_id, t.left_front, t.left_rear, t.right_front, t.right_rear
-        `;
+    WITH car_data AS (
+    SELECT
+        c.*,
+        ARRAY(
+            SELECT u.image_url
+            FROM url u
+            WHERE u.car_id = c.car_id
+        ) AS image_urls,
+        json_build_object(
+            'left_front', tyre.left_front,
+            'right_front', tyre.right_front,
+            'left_rear', tyre.left_rear,
+            'right_rear', tyre.right_rear
+        ) AS tyre_details,
+        ARRAY(
+            SELECT json_build_object(
+                'location', i.imperfection_location,
+                'description', i.imperfection_description
+            ) AS imperfections
+            FROM imperfection i
+            WHERE i.car_id = c.car_id
+        ) AS imperfections
+    FROM car c
+    LEFT JOIN tyre ON tyre.car_id = c.car_id
+    WHERE c.car_id = $1
+)
+SELECT * FROM car_data;
+    `
     const id = parseInt(req.params.id);
 
     if (isNaN(id)) {

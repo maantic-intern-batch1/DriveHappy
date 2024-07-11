@@ -37,6 +37,7 @@ const corsOptions = {
 
 // connecting the routers 
 const fetchData = require("./routes/dataFetch");
+// const uploadData = require("./routes/uploadData");
 // app.use(multer().array)
 app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: '50mb' }))
@@ -99,8 +100,8 @@ const storeCarDetails = async (carDetails, imageUrls) => {
         await client.query('BEGIN');
 
         const carResult = await client.query(
-            `INSERT INTO car (Make, Model, Year, Price, Distance, CarCondition, Repainted_Parts, Perfect_Parts, Repair_cost)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING Car_id`,
+            `INSERT INTO car (Make, Model, Year, Price, Distance, CarCondition, Repainted_Parts, Perfect_Parts, Repair_cost,FuelType)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9,$10) RETURNING Car_id`,
             [
                 carDetails.OtherDetails.MakeName,
                 carDetails.OtherDetails.ModelName,
@@ -111,6 +112,7 @@ const storeCarDetails = async (carDetails, imageUrls) => {
                 carDetails.OtherDetails.RepaintedParts,
                 carDetails.OtherDetails.PerfectParts,
                 parseNumeric(carDetails.OtherDetails.ApproximateCostOfRepair),
+                carDetails.OtherDetails.FuelType
             ]
         );
 
@@ -154,7 +156,7 @@ const storeCarDetails = async (carDetails, imageUrls) => {
     }
 };
 app.use("/fetchData", fetchData);
-
+// app.use("/uploadData", uploadData);
 app.post("/upload-images", upload.array('images'), async (req, res) => {
     try {
         const files = req.files;
@@ -169,8 +171,8 @@ app.post("/upload-images", upload.array('images'), async (req, res) => {
 
         const carId = await storeCarDetails(carDetails, fullUrls);
 
-        console.log('Car Details:', carDetails);
-        console.log('Uploaded Keys:', fullUrls);
+        // console.log('Car Details:', carDetails);
+        // console.log('Uploaded Keys:', fullUrls);
 
         res.status(200).json({ success: true, carId, fullUrls });
     } catch (error) {

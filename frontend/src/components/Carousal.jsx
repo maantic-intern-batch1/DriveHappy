@@ -11,7 +11,7 @@ export default function Carousal({ car }) {
     };
 
     return (
-        <div id="default-carousel" className="relative w-[400px]" data-carousel="slide">
+        <div id="default-carousel" className="mt-10 relative w-full" data-carousel="slide">
             {/* Carousel wrapper */}
             <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
                 {car.image_urls.map((url, index) => (
