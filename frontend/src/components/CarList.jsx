@@ -9,7 +9,8 @@ export default function CarList({ reviewer }) {
         async function fetchCarData() {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost:3000/fetchData');
+                const url = import.meta.env.VITE_BACKEND + '/fetchData';
+                const response = await fetch(url);
                 if (response.status === 200) {
                     const jsonData = await response.json();
                     const carDataFromDB = jsonData.data;

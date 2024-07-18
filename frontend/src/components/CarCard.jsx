@@ -16,7 +16,7 @@ export default function CarCard({ car }) {
                         <div className="font-bold text-base font-poppins">₹{car.price}</div>
                     </div>
                     <div className="flex flex-row justify-between mt-2">
-                        <div className="text-sm text-gray-500 font-lato">{car.year ? car.year : 'N.A'}</div>
+                        <div className="text-sm text-gray-500 font-lato">{car.year ? car.year : 'N.A'} | {car.fueltype ? car.fueltype : 'N.A'}</div>
 
                         <div className="text-sm text-gray-500 font-lato">{car.distance} km</div>
                     </div>

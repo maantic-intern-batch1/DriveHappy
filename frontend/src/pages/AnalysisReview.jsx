@@ -44,7 +44,8 @@ export default function AnalysisReview() {
         async function fetchCarDetails() {
             try {
                 setLoading(true);
-                const response = await fetch(`http://localhost:3000/fetchData/${id}`);
+                let url = import.meta.env.VITE_BACKEND + `/fetchData/${id}`;
+                const response = await fetch(url);
                 if (response.status === 200) {
                     const jsonData = await response.json();
                     const carDataFromDB = jsonData.data;
@@ -58,6 +59,7 @@ export default function AnalysisReview() {
                 setError('An unexpected error occurred ! Please try again later');
             } finally {
                 setLoading(false);
+                console.log(carDetails)
             }
         }
         fetchCarDetails();
@@ -84,19 +86,23 @@ export default function AnalysisReview() {
                                     <div className="grid grid-cols-3 gap-4">
                                         <div>
                                             <div className="font-bold">Price</div>
-                                            {edit ? <input type="number" value={tempDetails.price} onChange={(e) => handleInputChange(e, 'price')} /> : <div>₹ {carDetails.price}</div>}
+                                            {edit ? <input className="text-black font-normal" type="number" value={tempDetails.price} onChange={(e) => handleInputChange(e, 'price')} /> : <div>₹ {carDetails.price}</div>}
+                                        </div>
+                                        <div>
+                                            <div className="font-bold">Fuel Type</div>
+                                            {edit ? <input className="text-black font-normal" type="text" value={tempDetails.fueltype} onChange={(e) => handleInputChange(e, 'fueltype')} /> : <div>{carDetails.fueltype ? carDetails.fueltype : 'Not Available'}</div>}
                                         </div>
                                         <div>
                                             <div className="font-bold">Year</div>
-                                            {edit ? <input type="number" value={tempDetails.year} onChange={(e) => handleInputChange(e, 'year')} /> : <div>{carDetails.year ? carDetails.year : 'Not Available'}</div>}
+                                            {edit ? <input className="text-black font-normal" type="number" value={tempDetails.year} onChange={(e) => handleInputChange(e, 'year')} /> : <div>{carDetails.year ? carDetails.year : 'Not Available'}</div>}
                                         </div>
                                         <div>
                                             <div className="font-bold">Distance</div>
-                                            {edit ? <input type="number" value={tempDetails.distance} onChange={(e) => handleInputChange(e, 'distance')} /> : <div>{carDetails.distance} km</div>}
+                                            {edit ? <input className="text-black font-normal" type="number" value={tempDetails.distance} onChange={(e) => handleInputChange(e, 'distance')} /> : <div>{carDetails.distance} km</div>}
                                         </div>
                                         <div>
                                             <div className="font-bold">Car Condition</div>
-                                            {edit ? <input type="text" value={tempDetails.carcondition} onChange={(e) => handleInputChange(e, 'carcondition')} /> : <div>{carDetails.carcondition}</div>}
+                                            {edit ? <input className="text-black font-normal" type="text" value={tempDetails.carcondition} onChange={(e) => handleInputChange(e, 'carcondition')} /> : <div>{carDetails.carcondition}</div>}
                                         </div>
                                     </div>
 
