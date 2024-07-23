@@ -4,6 +4,11 @@ export default function CarCard({ car }) {
     function handleClick() {
         navigate("/analysisReview", { state: { id: car.car_id, review: false } });
     }
+    const formattedPrice = new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0, // Remove decimal places
+    }).format(car.price);
     return (
         <>
             <div className="border border-slate-200 rounded-xl p-4 shadow">
@@ -13,7 +18,7 @@ export default function CarCard({ car }) {
                 <div>
                     <div className="flex flex-row justify-between mt-4">
                         <div className="font-bold text-base font-poppins">{car.make} {car.model}</div>
-                        <div className="font-bold text-base font-poppins">₹{car.price}</div>
+                        <div className="font-bold text-base font-poppins">{formattedPrice}</div>
                     </div>
                     <div className="flex flex-row justify-between mt-2">
                         <div className="text-sm text-gray-500 font-lato">{car.year ? car.year : 'N.A'} | {car.fueltype ? car.fueltype : 'N.A'}</div>

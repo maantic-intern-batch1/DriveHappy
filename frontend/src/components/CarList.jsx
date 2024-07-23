@@ -1,35 +1,44 @@
 import CarCard from "./CarCard"
 import { useState, useEffect } from 'react';
 import Loader from './Loading';
-export default function CarList({ reviewer }) {
+
+export default function CarList({ reviewer, make, fuel, price }) {
     const [carData, setCarData] = useState([]);
-    const [error, setError] = useState();
+    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         async function fetchCarData() {
             try {
                 setLoading(true);
-                const url = import.meta.env.VITE_BACKEND + '/fetchData';
+                setError(null);
+                let url = new URL(import.meta.env.VITE_BACKEND + '/fetchData');
+
+                if (make !== 'any') url.searchParams.append('make', make);
+                if (fuel !== 'any') url.searchParams.append('fuel', fuel);
+                if (price !== 'any') url.searchParams.append('price', price);
+
                 const response = await fetch(url);
-                if (response.status === 200) {
+                if (response.ok) {
                     const jsonData = await response.json();
-                    const carDataFromDB = jsonData.data;
-                    setCarData(carDataFromDB);
+                    if (jsonData.success) {
+                        setCarData(jsonData.data);
+                    } else {
+                        setError(jsonData.error || 'Failed to fetch car data');
+                    }
+                } else {
+                    setError('Error fetching data. Please try again later.');
                 }
-                else {
-                    setError('Error 500, Please refresh the page or try again later.')
-                }
-            }
-            catch (err) {
-                console.log(err);
-                setError('An unexpected error occurred ! Please try again later');
-            }
-            finally {
+            } catch (err) {
+                console.error(err);
+                setError('An unexpected error occurred! Please try again later');
+            } finally {
                 setLoading(false);
             }
         }
         fetchCarData();
-    }, [])
+    }, [make, fuel, price])
+
     return (
         <>
             {loading && <Loader />}

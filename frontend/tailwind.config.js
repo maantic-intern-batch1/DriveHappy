@@ -10,7 +10,7 @@ export default {
       'title': ["Monrope", "sans-serif"],
       'lato': ["Lato", "sans-seriff"],
       'poppins': ["Poppins", "sans-seriff"],
-      'montserrat': ["Montserrat", "sans-seriff"]
+      'montserrat': ["Montserrat", "sans-seriff"],
     },
     screens: {
       'sm': '640px',

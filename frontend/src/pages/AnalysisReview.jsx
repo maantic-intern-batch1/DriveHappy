@@ -18,7 +18,16 @@ export default function AnalysisReview() {
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(0);
     const [error, setError] = useState('');
-
+    function formatIndianPrice(price) {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0, // Remove decimal places
+        }).format(price);
+    }
+    function formatDistance(distanceKm) {
+        return distanceKm.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
     useEffect(() => {
         async function fetchCarDetails() {
             try {
@@ -83,18 +92,20 @@ export default function AnalysisReview() {
                     <Carousal car={carDetails} />
                 </div>
                 <div className="mt-10 p-6 mb-4 bg-gray-50 text-medium text-gray-500 dark:text-gray-400 dark:bg-gray-800 rounded-lg w-1/2">
-                    <div className="flex flex-row justify-between">
+                    <div className="flex flex-row justify-between mb-4">
                         {isEditing ? (<>
                             <input
                                 className="text-black font-normal"
                                 type="text"
                                 value={carDetails.make}
+                                placeholder="Make name"
                                 onChange={(e) => handleInputChange(e, 'make')}
                             />
                             <input
                                 className="text-black font-normal"
                                 type="text"
                                 value={carDetails.model}
+                                placeholder="Model name"
                                 onChange={(e) => handleInputChange(e, 'model')}
                             />
                         </>) : <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
@@ -102,25 +113,25 @@ export default function AnalysisReview() {
                         </h3>}
                         <EditButton isEditing={isEditing} toggleEdit={() => dispatch(setIsEditing(!isEditing))} handleSave={handleSave} />
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-y-4 gap-x-6">
                         <div>
                             <div className="font-bold">Price</div>
                             {isEditing ? (
                                 <input
-                                    className="text-black font-normal"
+                                    className="text-black font-normal pl-1"
                                     type="number"
                                     value={carDetails.price}
                                     onChange={(e) => handleInputChange(e, 'price')}
                                 />
                             ) : (
-                                <div>₹ {carDetails.price}</div>
+                                <div>{formatIndianPrice(carDetails.price)}</div>
                             )}
                         </div>
                         <div>
                             <div className="font-bold">Fuel Type</div>
                             {isEditing ? (
                                 <input
-                                    className="text-black font-normal"
+                                    className="text-black font-normal pl-1"
                                     type="text"
                                     value={carDetails.fueltype}
                                     onChange={(e) => handleInputChange(e, 'fueltype')}
@@ -133,7 +144,7 @@ export default function AnalysisReview() {
                             <div className="font-bold">Year</div>
                             {isEditing ? (
                                 <input
-                                    className="text-black font-normal"
+                                    className="text-black font-normal pl-1"
                                     type="number"
                                     value={carDetails.year}
                                     onChange={(e) => handleInputChange(e, 'year')}
@@ -146,20 +157,20 @@ export default function AnalysisReview() {
                             <div className="font-bold">Distance</div>
                             {isEditing ? (
                                 <input
-                                    className="text-black font-normal"
+                                    className="text-black font-normal pl-1"
                                     type="number"
                                     value={carDetails.distance}
                                     onChange={(e) => handleInputChange(e, 'distance')}
                                 />
                             ) : (
-                                <div>{carDetails.distance} km</div>
+                                <div>{formatDistance(carDetails.distance)} km</div>
                             )}
                         </div>
                         <div>
                             <div className="font-bold">Car Condition</div>
                             {isEditing ? (
                                 <input
-                                    className="text-black font-normal"
+                                    className="text-black font-normal pl-1"
                                     type="text"
                                     value={carDetails.carcondition}
                                     onChange={(e) => handleInputChange(e, 'carcondition')}
@@ -172,7 +183,7 @@ export default function AnalysisReview() {
                             <div className="font-bold">Repainted Parts</div>
                             {isEditing ? (
                                 <input
-                                    className="text-black font-normal"
+                                    className="text-black font-normal pl-1"
                                     type="text"
                                     value={carDetails.repainted_parts}
                                     onChange={(e) => handleInputChange(e, 'repainted_parts')}
@@ -185,7 +196,7 @@ export default function AnalysisReview() {
                             <div className="font-bold">Perfect Parts</div>
                             {isEditing ? (
                                 <input
-                                    className="text-black font-normal"
+                                    className="text-black font-normal pl-1"
                                     type="text"
                                     value={carDetails.perfect_parts}
                                     onChange={(e) => handleInputChange(e, 'perfect_parts')}
@@ -198,13 +209,13 @@ export default function AnalysisReview() {
                             <div className="font-bold">Repair Cost</div>
                             {isEditing ? (
                                 <input
-                                    className="text-black font-normal"
+                                    className="text-black font-normal pl-1"
                                     type="text"
                                     value={carDetails.repair_cost}
                                     onChange={(e) => handleInputChange(e, 'repair_cost')}
                                 />
                             ) : (
-                                <div>{carDetails.repair_cost}</div>
+                                <div>{formatIndianPrice(carDetails.repair_cost)}</div>
                             )}
                         </div>
                     </div>

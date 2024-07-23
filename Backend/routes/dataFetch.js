@@ -17,21 +17,66 @@ const pool = new Pool({
 // For retreiving an overview detail of all cars - will return basic car overview (not tyre,imperfection)
 router.get("/", async (req, res) => {
     const client = await pool.connect();
-    const query = `
+    let { make, fuel, price } = req.query;
+
+    let query = `
     SELECT 
         c.*,
         array_agg(DISTINCT u.image_url) AS image_urls 
-        FROM car c
-        LEFT JOIN url u ON c.car_id = u.car_id 
-        GROUP BY c.car_id
-    `
+    FROM car c
+    LEFT JOIN url u ON c.car_id = u.car_id 
+    WHERE 1=1
+    `;
+
+    const queryParams = [];
+
+    if (make && make !== 'any') {
+        queryParams.push(make);
+        query += ` AND LOWER(c.make) = LOWER($${queryParams.length})`;
+    }
+
+    if (fuel && fuel !== 'any') {
+        queryParams.push(`%${fuel}%`);
+        query += ` AND c.fueltype ILIKE $${queryParams.length}`;
+    }
+
+    if (price && price !== 'any') {
+        let minPrice, maxPrice;
+        switch (price) {
+            case 'price2':
+                minPrice = 100000; // 1 Lakh
+                maxPrice = 400000; // 4 Lakhs
+                break;
+            case 'price3':
+                minPrice = 400000; // 4 Lakhs
+                maxPrice = 800000; // 8 Lakhs
+                break;
+            case 'price4':
+                minPrice = 800000; // 8 Lakhs
+                maxPrice = 1500000; // 15 Lakhs
+                break;
+            case 'price5':
+                minPrice = 1500000; // 15 Lakhs
+                maxPrice = 9999999999; // A very high number instead of Number.MAX_SAFE_INTEGER
+                break;
+            default:
+                minPrice = 0;
+                maxPrice = 9999999999; // A very high number
+        }
+        queryParams.push(minPrice, maxPrice);
+        query += ` AND c.price::numeric BETWEEN $${queryParams.length - 1} AND $${queryParams.length}`;
+    }
+
+    query += ` GROUP BY c.car_id`;
+
     try {
-        const carData = await client.query(query);
-        if (carData.rows.length === 0)
-            return res.status(200).json({ success: false, error: 'Car details could not be retrieved' })
+        const carData = await client.query(query, queryParams);
+        if (carData.rows.length === 0) {
+            return res.status(200).json({ success: false, error: 'No cars found matching the criteria' });
+        }
         res.status(200).json({ success: true, data: carData.rows });
     } catch (error) {
-        console.log("Error retrieving data: ", error);
+        console.error("Error retrieving data: ", error);
         res.status(500).json({ success: false, error: 'An error occurred while fetching car data. Please try again.' });
     } finally {
         client.release();
