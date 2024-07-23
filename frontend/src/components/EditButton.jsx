@@ -1,9 +1,10 @@
-export default function EditButton({ edit, toggleEdit, handleSave }) {
-    function save() {
-        if (edit)
-            handleSave();
-    }
+export default function EditButton({ isEditing, toggleEdit, handleSave }) {
     return (
-        <button onClick={() => { toggleEdit(); save(); }} className="rounded bg-[#FBEAEB] font-bold text-[#2F3C7E] px-5 hover:bg-[#fff]">{edit == false ? 'Edit' : 'Save'}</button>
-    )
+        <button
+            onClick={() => isEditing ? handleSave() : toggleEdit()}
+            className="rounded bg-[#FBEAEB] font-bold text-[#2F3C7E] px-5 hover:bg-[#fff]"
+        >
+            {isEditing ? 'Save' : 'Edit'}
+        </button>
+    );
 }

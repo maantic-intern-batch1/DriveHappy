@@ -1,13 +1,12 @@
 import EditButton from "./EditButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function PartsSummary({ car, handleSave, review }) {
-    const [edit, setEdit] = useState(false);
+export default function PartsSummary({ car, handleSave, review, edit }) {
+    // return <>Parts Summary</>
     const [tempParts, setTempParts] = useState({
         repainted_parts: car.repainted_parts,
         perfect_parts: car.perfect_parts,
     });
-
     function toggleEdit() {
         setEdit((prev) => !prev);
     }

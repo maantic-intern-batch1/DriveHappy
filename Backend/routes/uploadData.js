@@ -5,6 +5,7 @@ const multer = require('multer');
 const { Pool } = require('pg');
 const { sendImagesToGemini } = require('../utils/gemini');
 const { uploadImageToS3 } = require('../utils/s3');
+const carController = require('../controllers/carController');
 let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, PGPORT } = process.env;
 
 const storage = multer.memoryStorage(); // Use memory storage
@@ -104,4 +105,6 @@ router.post("/images", upload.array('images'), async (req, res) => {
         res.status(500).json({ success: false, error: 'An error occurred' });
     }
 });
+
+router.post('/update/:id', carController.updateCarDetails);
 module.exports = router;
