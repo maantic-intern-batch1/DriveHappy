@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom"
-export default function CarCard({ car }) {
+export default function CarCard({ car, review }) {
     const navigate = useNavigate();
     function handleClick() {
-        navigate("/analysisReview", { state: { id: car.car_id, review: false } });
+        navigate("/analysisReview", { state: { id: car.car_id, review: review } });
     }
     const formattedPrice = new Intl.NumberFormat('en-IN', {
         style: 'currency',

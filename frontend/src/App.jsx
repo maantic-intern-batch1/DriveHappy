@@ -2,6 +2,7 @@ import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import AnalysisReview from "./pages/AnalysisReview";
 import AddImages from "./pages/AddImages";
+import Reviewer from "./pages/Reviewer.jsx";
 import {
   createBrowserRouter,
   RouterProvider
@@ -23,6 +24,10 @@ export default function App() {
         {
           path: 'analysisReview',
           element: <AnalysisReview />
+        },
+        {
+          path: 'review',
+          element: <Reviewer />
         }
       ]
     },

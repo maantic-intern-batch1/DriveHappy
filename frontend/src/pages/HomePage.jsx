@@ -3,13 +3,14 @@ import Car2 from "../assets/car4.jpg";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import CarList from "../components/CarList";
-export default function HomePage() {
+export default function HomePage({ review = false }) {
     const [make, setMake] = useState('any');
     const [fuel, setFuel] = useState('any');
     const [price, setPrice] = useState('any');
     const [drop1, setDrop1] = useState(false);
     const [drop2, setDrop2] = useState(false);
     const [drop3, setDrop3] = useState(false);
+    console.log("Review : ", review)
     function handleDrop(num) {
         if (num == 1)
             setDrop1((prev) => !prev)
@@ -42,9 +43,10 @@ export default function HomePage() {
                     </div>
                     <div className="absolute top-1/3 left-1/4 transform -translate-x-1/4 -translate-y-1/4 text-white font-lato">
                         <div>
-
-                            <h1 className="text-3xl "><span className="font-bold">Find</span> your next match. </h1>
-                            <p>Dream Cars, Real Prices. Drive home your perfect ride today. </p>
+                            {review == true && <><h1 className="text-3xl "><span className="font-bold">Review</span> or edit the cars listed </h1>
+                            </>}
+                            {review == false && <><h1 className="text-3xl "><span className="font-bold">Find</span> your next match. </h1>
+                                <p>Dream Cars, Real Prices. Drive home your perfect ride today. </p></>}
                         </div>
                         <div className="mt-4">
                             <form action="" className="flex flex-row gap-x-8 h-10">
@@ -105,11 +107,11 @@ export default function HomePage() {
 
                                         <div>
                                             <input type="radio" id="price3" name="price" value="price3" onChange={(e) => handleFilterChange('price', e.target.value)} checked={price === 'price3'} />
-                                            <label htmlFor="price3"> ₹ 4lakhs - ₹ 8Lakhs</label>
+                                            <label htmlFor="price3"> ₹ 4Lakhs - ₹ 8Lakhs</label>
                                         </div>
                                         <div>
                                             <input type="radio" id="price4" name="price" value="price4" onChange={(e) => handleFilterChange('price', e.target.value)} checked={price === 'price4'} />
-                                            <label htmlFor="price4"> ₹ 8laks - ₹ 15Lakhs</label>
+                                            <label htmlFor="price4"> ₹ 8Lakhs - ₹ 15Lakhs</label>
                                         </div>
                                         <div>
                                             <input type="radio" id="price5" name="price" value="price5" onChange={(e) => handleFilterChange('price', e.target.value)} checked={price === 'price5'} />
@@ -121,7 +123,7 @@ export default function HomePage() {
                         </div>
                     </div>
                 </div>
-                <CarList reviewer={false} make={make} fuel={fuel} price={price} />
+                <CarList review={review} make={make} fuel={fuel} price={price} />
             </div>
         </>
     )

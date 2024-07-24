@@ -15,6 +15,7 @@ export default function AnalysisReview() {
     const { details: carDetails, isEditing } = useSelector(state => state.car);
     const w = ['Imperfections', 'Tyres'];
     const { id } = location.state || {};
+    const { review } = location.state || {};
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(0);
     const [error, setError] = useState('');
@@ -25,6 +26,10 @@ export default function AnalysisReview() {
             maximumFractionDigits: 0, // Remove decimal places
         }).format(price);
     }
+    useEffect(() => {
+        console.log("Location state:", location.state);
+        console.log("Review value:", review);
+    }, [location.state, review]);
     function formatDistance(distanceKm) {
         return distanceKm.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -111,7 +116,7 @@ export default function AnalysisReview() {
                         </>) : <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                             {carDetails.make} {carDetails.model}
                         </h3>}
-                        <EditButton isEditing={isEditing} toggleEdit={() => dispatch(setIsEditing(!isEditing))} handleSave={handleSave} />
+                        {review == true && <EditButton isEditing={isEditing} toggleEdit={() => dispatch(setIsEditing(!isEditing))} handleSave={handleSave} />}
                     </div>
                     <div className="grid grid-cols-3 gap-y-4 gap-x-6">
                         <div>
@@ -182,27 +187,47 @@ export default function AnalysisReview() {
                         <div>
                             <div className="font-bold">Repainted Parts</div>
                             {isEditing ? (
-                                <input
-                                    className="text-black font-normal pl-1"
-                                    type="text"
+                                <textarea
+                                    className="text-black font-normal pl-1 w-full resize-none overflow-y-auto"
                                     value={carDetails.repainted_parts}
                                     onChange={(e) => handleInputChange(e, 'repainted_parts')}
+                                    rows="2"  // Adjust this value to set the initial visible height
+                                    style={{ maxHeight: '100px' }}  // Adjust this value to set the maximum height
                                 />
                             ) : (
-                                <div>{carDetails.repainted_parts}</div>
+                                <div
+                                    className="overflow-y-auto max-h-[100px] rounded p-2 "
+                                    style={{
+                                        backgroundColor: '#1F2937',
+                                        scrollbarWidth: 'thin',
+                                        scrollbarColor: '#4B5563 #1F2937'
+                                    }}
+                                >
+                                    {carDetails.repainted_parts}
+                                </div>
                             )}
                         </div>
                         <div>
                             <div className="font-bold">Perfect Parts</div>
                             {isEditing ? (
-                                <input
-                                    className="text-black font-normal pl-1"
-                                    type="text"
+                                <textarea
+                                    className="text-black font-normal pl-1 w-full resize-none overflow-y-auto"
                                     value={carDetails.perfect_parts}
                                     onChange={(e) => handleInputChange(e, 'perfect_parts')}
+                                    rows="2"  // Adjust this value to set the initial visible height
+                                    style={{ maxHeight: '100px' }}  // Adjust this value to set the maximum height
                                 />
                             ) : (
-                                <div>{carDetails.perfect_parts}</div>
+                                <div
+                                    className="overflow-y-auto max-h-[100px] rounded p-2 "
+                                    style={{
+                                        backgroundColor: '#1F2937',
+                                        scrollbarWidth: 'thin',
+                                        scrollbarColor: '#4B5563 #1F2937'
+                                    }}
+                                >
+                                    {carDetails.perfect_parts}
+                                </div>
                             )}
                         </div>
                         <div>
