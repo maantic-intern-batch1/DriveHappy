@@ -8,7 +8,7 @@ import TyreSummary from '../components/TyreSummary';
 import ImperfectionSummary from '../components/ImperfectionSummary';
 import PartsSummary from '../components/PartsSummary';
 import EditButton from '../components/EditButton';
-
+import InterestedModal from '../components/InterestedModal';
 export default function AnalysisReview() {
     const location = useLocation();
     const dispatch = useDispatch();
@@ -19,6 +19,47 @@ export default function AnalysisReview() {
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(0);
     const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleInterested = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+    };
+    const handleModalSubmit = async ({ phone, email }) => {
+        try {
+            const response = await fetch('http://localhost:3000/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone,
+                    email,
+                    carDetails: {
+                        make: carDetails.make,
+                        model: carDetails.model,
+                        year: carDetails.year,
+                    },
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Thank you for your interest. We will contact you soon!');
+            } else {
+                alert('There was an error submitting your information. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+
+        setIsModalOpen(false);
+    };
     function formatIndianPrice(price) {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -31,7 +72,9 @@ export default function AnalysisReview() {
         console.log("Review value:", review);
     }, [location.state, review]);
     function formatDistance(distanceKm) {
-        return distanceKm.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        if (distanceKm)
+            return distanceKm.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return null;
     }
     useEffect(() => {
         async function fetchCarDetails() {
@@ -116,6 +159,10 @@ export default function AnalysisReview() {
                         </>) : <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                             {carDetails.make} {carDetails.model}
                         </h3>}
+                        {review == false && <button
+                            className="rounded bg-[#FBEAEB] font-bold text-[#2F3C7E] px-5 hover:bg-[#fff]"
+                            onClick={handleInterested}
+                        >Mark as interested</button>}
                         {review == true && <EditButton isEditing={isEditing} toggleEdit={() => dispatch(setIsEditing(!isEditing))} handleSave={handleSave} />}
                     </div>
                     <div className="grid grid-cols-3 gap-y-4 gap-x-6">
@@ -263,6 +310,11 @@ export default function AnalysisReview() {
             {selected === 0 && <ImperfectionSummary />}
             {selected === 1 && <TyreSummary />}
             {/* {selected === 2 && <PartsSummary />} */}
+            <InterestedModal
+                isOpen={isModalOpen}
+                onClose={handleModalClose}
+                onSubmit={handleModalSubmit}
+            />
         </div>
     );
 }

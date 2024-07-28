@@ -18,7 +18,7 @@ const s3Client = new S3Client(
 async function uploadImageToS3(file) {
     const rawBytes = await randomBytes(16); // generates 16 random bytes
     const imageName = rawBytes.toString('hex'); // converting the bytes into hexadecimal
-    const key = `/used-car-images/${imageName}`; // Constructing the key with the desired folder structure
+    const key = `used-car-images/${imageName}`; // Constructing the key with the desired folder structure
     const command = new PutObjectCommand({
         Bucket: BUCKET_NAME,
         Key: key,
